@@ -1,4 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useReducer, useCallback, useEffect } from 'react';
+import taskReducer from './taskReducer';
 
 const STORAGE_KEY = 'todo-tasks';
 
@@ -15,70 +16,27 @@ function saveTasks(tasks) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   } catch {
-    // Silent fail - localStorage might be full or disabled
+    // Storage quota exceeded or disabled
   }
 }
 
 export function useTasks() {
-  const [tasks, setTasks] = useState(loadTasks);
+  const [tasks, dispatch] = useReducer(taskReducer, loadTasks());
 
-  const persist = useCallback((next) => {
-    setTasks(next);
-    saveTasks(next);
-  }, []);
+  // Persist on every change
+  useEffect(() => {
+    if (tasks.length > 0 || localStorage.getItem(STORAGE_KEY)) {
+      saveTasks(tasks);
+    }
+  }, [tasks]);
 
-  const addTask = useCallback((task) => {
-    setTasks((prev) => {
-      const next = [
-        ...prev,
-        {
-          ...task,
-          id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2),
-          order: prev.length,
-          completed: false,
-          createdAt: new Date().toISOString(),
-        },
-      ];
-      saveTasks(next);
-      return next;
-    });
-  }, []);
+  const addTask = useCallback((task) => dispatch({ type: 'ADD_TASK', payload: task }), []);
+  const updateTask = useCallback((id, updates) => dispatch({ type: 'UPDATE_TASK', id, updates }), []);
+  const deleteTask = useCallback((id) => dispatch({ type: 'DELETE_TASK', id }), []);
+  const toggleComplete = useCallback((id) => dispatch({ type: 'TOGGLE_COMPLETE', id }), []);
+  const reorderTasks = useCallback((fromIndex, toIndex) => dispatch({ type: 'REORDER', fromIndex, toIndex }), []);
+  const importAll = useCallback((importedTasks) => dispatch({ type: 'IMPORT', payload: importedTasks }), []);
+  const completeAll = useCallback(() => dispatch({ type: 'BULK_COMPLETE' }), []);
 
-  const updateTask = useCallback((id, updates) => {
-    setTasks((prev) => {
-      const next = prev.map((t) => (t.id === id ? { ...t, ...updates } : t));
-      saveTasks(next);
-      return next;
-    });
-  }, []);
-
-  const deleteTask = useCallback((id) => {
-    setTasks((prev) => {
-      const next = prev.filter((t) => t.id !== id);
-      saveTasks(next);
-      return next;
-    });
-  }, []);
-
-  const toggleComplete = useCallback((id) => {
-    setTasks((prev) => {
-      const next = prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t));
-      saveTasks(next);
-      return next;
-    });
-  }, []);
-
-  const reorderTasks = useCallback((fromIndex, toIndex) => {
-    setTasks((prev) => {
-      // Order by current sort, then swap
-      const sorted = [...prev].sort((a, b) => a.order - b.order);
-      const [moved] = sorted.splice(fromIndex, 1);
-      sorted.splice(toIndex, 0, moved);
-      const next = sorted.map((t, i) => ({ ...t, order: i }));
-      saveTasks(next);
-      return next;
-    });
-  }, []);
-
-  return { tasks, addTask, updateTask, deleteTask, toggleComplete, reorderTasks };
+  return { tasks, addTask, updateTask, deleteTask, toggleComplete, reorderTasks, importAll, completeAll };
 }

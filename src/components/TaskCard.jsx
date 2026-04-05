@@ -37,19 +37,26 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit }) {
 
   const overdue = task.dueDate && !task.completed && isBefore(new Date(task.dueDate), new Date(new Date().toDateString()));
 
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    onDelete(task.id, task.title);
+  };
+
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className="group task-card-shadow bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 animate-slideIn hover:border-primary-200 dark:hover:border-primary-700"
+      className="group task-card-shadow bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 p-4 animate-slideIn hover:border-violet-200 dark:hover:border-violet-700"
+      role="listitem"
+      aria-label={`Task: ${task.title}${task.completed ? ', completed' : ''}`}
     >
       <div className="flex items-start gap-3">
         <button
           onClick={() => onToggle(task.id)}
           className={`mt-0.5 w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
             task.completed
-              ? 'bg-primary-500 border-primary-500 text-white'
-              : 'border-gray-300 dark:border-slate-500 hover:border-primary-400'
+              ? 'bg-violet-500 border-violet-500 text-white'
+              : 'border-gray-300 dark:border-slate-500 hover:border-violet-400'
           }`}
           aria-label={task.completed ? 'Mark incomplete' : 'Mark complete'}
         >
@@ -62,19 +69,21 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit }) {
 
         <div className="flex-1 min-w-0">
           <button
-            className="text-left w-full cursor-grab active:cursor-grabbing"
+            className="text-left w-full cursor-grab active:cursor-grabbing select-none"
             {...attributes}
             {...listeners}
+            aria-label="Drag to reorder"
+            tabIndex={0}
           >
             <h3 className={`font-medium text-gray-900 dark:text-gray-100 leading-snug ${
-              task.completed ? 'line-through text-gray-400 dark:text-gray-500' : ''
+              task.completed ? 'line-through text-gray-500 dark:text-gray-500' : ''
             }`}>
               {task.title}
             </h3>
           </button>
 
           {task.description && (
-            <p className={`text-sm mt-1 text-gray-500 dark:text-gray-400 line-clamp-2 ${
+            <p className={`text-sm mt-1 text-gray-600 dark:text-gray-400 line-clamp-2 ${
               task.completed ? 'line-through' : ''
             }`}>
               {task.description}
@@ -106,8 +115,8 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit }) {
 
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
-            onClick={() => onEdit(task)}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+            onClick={(e) => { e.stopPropagation(); onEdit(task); }}
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-700 text-gray-500 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
             aria-label="Edit task"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -115,8 +124,8 @@ export default function TaskCard({ task, onToggle, onDelete, onEdit }) {
             </svg>
           </button>
           <button
-            onClick={() => onDelete(task.id)}
-            className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-500"
+            onClick={handleDelete}
+            className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-500 hover:text-red-500 transition-colors"
             aria-label="Delete task"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

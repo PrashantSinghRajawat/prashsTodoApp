@@ -24,7 +24,7 @@ export default function StatsPanel({ tasks }) {
 
   return (
     <div className="w-60 flex-shrink-0">
-      <h3 className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-3">Stats</h3>
+      <h3 className="text-xs font-semibold text-gray-600 dark:text-slate-500 uppercase tracking-wider mb-3">Stats</h3>
       <div className="space-y-3">
         {stats.map((s) => (
           <div key={s.label} className={`rounded-xl p-3 ${s.bg}`}>
@@ -32,7 +32,7 @@ export default function StatsPanel({ tasks }) {
               <div className={s.color}>{s.icon}</div>
               <div>
                 <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
-                <div className="text-xs font-medium text-gray-500 dark:text-gray-400">{s.label}</div>
+                <div className="text-xs font-medium text-gray-600 dark:text-gray-600">{s.label}</div>
               </div>
             </div>
           </div>
@@ -42,12 +42,12 @@ export default function StatsPanel({ tasks }) {
       {total > 0 && (
         <div className="mt-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Completion</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-gray-600">Completion</span>
             <span className="text-xs font-bold text-gray-700 dark:text-gray-200">{rate}%</span>
           </div>
           <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-primary-500 to-primary-400 rounded-full transition-all duration-500"
+              className="h-full bg-gradient-to-r from-violet-500 to-violet-400 rounded-full transition-all duration-500"
               style={{ width: `${rate}%` }}
             />
           </div>
