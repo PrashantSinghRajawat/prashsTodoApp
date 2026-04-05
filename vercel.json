@@ -10,7 +10,7 @@
       "maxDuration": 30
     },
     "api/subscribe.js": {
-      "runtime": "@vercel/edge"
+      "maxDuration": 30
     }
   }
 }
