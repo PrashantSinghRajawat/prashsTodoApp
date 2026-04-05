@@ -5,15 +5,21 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_TOKEN,
 });
 
-export default async function handler(req, res) {
+export default async function handler(req) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
-  const { email, tasks, reminderTime } = req.body;
+  const { email, tasks, reminderTime } = await req.json();
 
   if (!email || !tasks || !Array.isArray(tasks)) {
-    return res.status(400).json({ error: 'Invalid payload' });
+    return new Response(JSON.stringify({ error: 'Invalid payload' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 
   await redis.hset(`user:${email}`, {
@@ -26,5 +32,8 @@ export default async function handler(req, res) {
 
   await redis.sadd('subscribers', email);
 
-  res.status(200).json({ ok: true });
+  return new Response(JSON.stringify({ ok: true }), {
+    status: 200,
+    headers: { 'Content-Type': 'application/json' },
+  });
 }
