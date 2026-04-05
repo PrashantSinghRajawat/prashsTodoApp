@@ -1,4 +1,5 @@
 import { useMemo, useEffect } from 'react';
+import EmailPreferences from './EmailPreferences';
 
 const filterIcons = {
   all: (
@@ -23,7 +24,7 @@ const filterIcons = {
   ),
 };
 
-export default function Sidebar({ tasks, filters, onFilterChange, onSearch, search, onCompleteAll }) {
+export default function Sidebar({ tasks, filters, onFilterChange, onSearch, search, onCompleteAll, emailPrefs, onEmailToggle }) {
   const allTags = useMemo(() => {
     const tagSet = new Set();
     tasks.forEach((t) => t.tags?.forEach((tag) => tagSet.add(tag)));
@@ -132,6 +133,12 @@ export default function Sidebar({ tasks, filters, onFilterChange, onSearch, sear
           </div>
         </div>
       )}
+
+      <EmailPreferences
+        prefs={emailPrefs}
+        onToggle={onEmailToggle}
+        tasks={tasks}
+      />
     </aside>
   );
 }

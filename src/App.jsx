@@ -2,17 +2,20 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useTasks } from './hooks/useTasks';
+import { useEmailPreferences } from './hooks/useEmailPreferences';
 import { useToast } from './hooks/useToast';
 import { exportTasks, importTasks } from './utils/exportImport';
 import ErrorBoundary from './components/ErrorBoundary';
 import TaskBoard from './components/TaskBoard';
 import Sidebar from './components/Sidebar';
+import EmailPreferences from './components/EmailPreferences';
 import StatsPanel from './components/StatsPanel';
 import ToastContainer from './components/ToastContainer';
 import ConfirmDialog from './components/ConfirmDialog';
 
 function AppContent() {
   const { tasks, addTask, updateTask, deleteTask, toggleComplete, reorderTasks, completeAll, importAll } = useTasks();
+  const { prefs: emailPrefs, update: updateEmailPref } = useEmailPreferences();
   const { toasts, addToast, removeToast } = useToast();
   const [taskFilter, setTaskFilter] = useState('all');
   const [search, setSearch] = useState('');
@@ -230,6 +233,8 @@ function AppContent() {
                 onSearch={setSearch}
                 search={search}
                 onCompleteAll={handleCompleteAll}
+                emailPrefs={emailPrefs}
+                onEmailToggle={updateEmailPref}
               />
             </div>
           </div>
