@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/remind",
+      "schedule": "0 9 * * *"
+    }
+  ],
+  "functions": {
+    "api/remind.js": {
+      "maxDuration": 30
+    },
+    "api/subscribe.js": {
+      "runtime": "@vercel/edge"
+    }
+  }
+}
