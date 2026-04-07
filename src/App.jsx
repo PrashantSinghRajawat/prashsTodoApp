@@ -6,6 +6,7 @@ import { useEmailPreferences } from './hooks/useEmailPreferences';
 import { useToast } from './hooks/useToast';
 import { exportTasks, importTasks } from './utils/exportImport';
 import ErrorBoundary from './components/ErrorBoundary';
+import MiniStats from './components/MiniStats';
 import TaskBoard from './components/TaskBoard';
 import Sidebar from './components/Sidebar';
 import EmailPreferences from './components/EmailPreferences';
@@ -153,44 +154,45 @@ function AppContent() {
   return (
     <div className={`min-h-screen ${dark ? 'bg-slate-950' : 'bg-gray-50'} transition-colors`}>
       <header className="border-b border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-900 relative z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Mobile menu button */}
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Mobile menu button — hidden on tablet+ */}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-500 dark:text-gray-400"
+              className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-500 dark:text-gray-400"
               aria-label="Toggle sidebar"
+              aria-expanded={sidebarOpen}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-violet-400 flex items-center justify-center shadow-sm">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-violet-500 to-violet-400 flex items-center justify-center shadow-sm">
+              <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">TaskFlow</h1>
+            <h1 className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100">TaskFlow</h1>
           </div>
 
           <div className="flex items-center gap-1">
-            {/* Import/Export */}
-            <div className="hidden sm:flex items-center gap-2 mr-2 pr-3 border-r border-gray-200 dark:border-slate-700">
+            {/* Import/Export — hidden on mobile, icon-only on tablet, full on desktop */}
+            <div className="hidden md:flex items-center gap-2 mr-2 pr-3 border-r border-gray-200 dark:border-slate-700">
               <button onClick={handleImport} aria-label="Import tasks"
-                className="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-violet-300 dark:hover:border-violet-600 hover:text-violet-700 dark:hover:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all"
+                className="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-violet-300 dark:hover:border-violet-600 hover:text-violet-700 dark:hover:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-all"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 12h6m-3-3v6" />
                 </svg>
-                Import
+                <span className="hidden xl:inline">Import</span>
               </button>
               <button onClick={handleExport} aria-label="Export tasks"
-                className="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-violet-300 dark:hover:border-violet-600 hover:text-violet-700 dark:hover:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/20 transition-all"
+                className="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-gray-600 dark:text-gray-300 bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-violet-300 dark:hover:border-violet-600 hover:text-violet-700 dark:hover:text-violet-300 hover:bg-violet-50 dark:hover:bg-violet-900/30 transition-all"
               >
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                Export
+                <span className="hidden xl:inline">Export</span>
               </button>
             </div>
             <button
@@ -212,20 +214,25 @@ function AppContent() {
         </div>
       </header>
 
-      {/* Mobile overlay */}
+      {/* Mobile & tablet overlay */}
       {sidebarOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden bg-black/40 backdrop-blur-sm animate-fadeIn" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-0 z-40 md:hidden bg-black/40 backdrop-blur-sm animate-fadeIn" onClick={() => setSidebarOpen(false)} />
       )}
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-          {/* Sidebar - responsive */}
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+        {/* Compact stats mini-bar — visible on mobile & tablet only */}
+        <div className="md:hidden mb-4">
+          <MiniStats tasks={tasks} />
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-4 lg:gap-6">
+          {/* Sidebar — slides in on mobile & tablet, static on desktop */}
           <div
-            className={`fixed lg:static inset-y-0 left-0 z-40 w-56 lg:flex-shrink-0 transform transition-transform duration-200 ${
+            className={`fixed inset-y-0 left-0 z-50 w-72 md:w-64 lg:w-56 xl:w-60 lg:static lg:flex-shrink-0 transform transition-transform duration-200 ${
               sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-            } bg-white dark:bg-slate-900 lg:bg-transparent dark:lg:bg-transparent p-4 lg:p-0 border-r lg:border-0 border-gray-200 dark:border-slate-800`}
+            } bg-white dark:bg-slate-900 lg:bg-transparent dark:lg:bg-transparent p-4 lg:p-0 border-r lg:border-0 border-gray-200 dark:border-slate-700`}
           >
-            <div className="pt-16 lg:pt-0 space-y-6">
+            <div className="pt-16 lg:pt-0 space-y-5 lg:space-y-6 max-h-[calc(100vh-4rem)] overflow-y-auto pb-20 lg:pb-0">
               <Sidebar
                 tasks={tasks}
                 filters={{ filter: taskFilter }}
@@ -254,11 +261,14 @@ function AppContent() {
             </DndContext>
           </div>
 
-          <StatsPanel tasks={tasks} />
+          {/* Desktop stats — hidden on mobile & tablet */}
+          <div className="hidden lg:block lg:flex-shrink-0">
+            <StatsPanel tasks={tasks} />
+          </div>
         </div>
       </main>
 
-      <footer className="border-t border-gray-200 dark:border-slate-800 py-6 text-center">
+      <footer className="border-t border-gray-200 dark:border-slate-800 py-4 sm:py-6 text-center px-4">
         <p className="text-sm text-gray-500 dark:text-slate-500">
           Developed by <span className="font-semibold text-gray-600 dark:text-slate-300">Prashcode</span> with{" "}
           <span className="inline-block animate-pulse text-red-500">&hearts;</span>

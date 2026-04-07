@@ -78,7 +78,7 @@ export default async function handler(req) {
 
     try {
       await resend.emails.send({
-        from: 'TaskFlow <reminders@resend.dev>',
+        from: process.env.RESEND_FROM_ADDRESS || 'TaskFlow <onboarding@resend.dev>',
         to: [email],
         subject: `You have ${overdue.length} overdue task${overdue.length > 1 ? 's' : ''} — TaskFlow`,
         html,
